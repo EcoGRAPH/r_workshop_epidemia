@@ -1,0 +1,13 @@
+[epidemia_development]
+user=epidemiamdl
+password=phoh0ou5Shie
+database=epidemiawebdb
+host=kabru.sdstate.edu
+port=3306
+
+[epidemia_production]
+user=epidemiapdmdl
+password=iel3Eesaekee
+database=epidemiaproddb
+host=kabru.sdstate.edu
+port=3306

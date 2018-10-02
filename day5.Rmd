@@ -1,0 +1,42 @@
+---
+title: |
+  | Introduction to R for Disease Surveillance 
+  | and Outbreak Forecasting: Day 5
+subtitle: Further exploration of disease--environment relationships
+author: |
+  | Michael Wimberly & Chris Merkord,
+  | Geospatial Sciences Center of Excellence, South Dakota State University
+date: July 21 2017, Addis Ababa, Ethiopia
+output:
+  pdf_document: default
+  html_document: default
+---
+
+\pagenumbering{gobble}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##	Day 5 exercise
+
+The  assignment for day 5 will be to build on the concepts that have been learned throughout the week and the example workflows that were presented yesterday to carry out a more detailed analysis of variability in malaria indicators and environmental variables across four woredas. We will use the same sample dataset (epidemia_proc_data.csv) that was used on day 4. 
+
+1. Generate summary statistics for the following variables:  
+**Mean indicence of all malari**a 
+**Mean incidence of *Plasmodium falciparum*/mixed malaria**  
+**Mean incidence of *Plasmodium vivax* malaria**  
+**Mean temperature**  
+**Total precipitation**  
+Summarize by woreda and season, where seasons are defined as follows:  
+**Dry Season** : epiweeks 1-13  
+**Transition Season 1**: epiweeks 14-26  
+**Rainy Season**: epiweeks 27-39  
+**Transition Season 2**: epiweeks 40-52  
+Generate effective graphs that show how the summarized malaria indicators and environmental variables differ by season, and how these patterns vary across the four woredas.
+
+2. Compare malaria-environment relationships across the following woredas: Fogera, Mecha, and Metema. First, generate a set of graphs and visually assess the lagged effects of temperature and rainfall on malaria incidence. Which woreda appears to have the strongest relationship between environmental variables and malaria incidence? Which woreda appears to have the weakest relationship? Then develop a linear model for each woreda and compare the results.
+
+3. Focusing on Fogera, assess the influences of temperature and precipitation on *Plasmodium faciparum*/mixed malaria versus *Plasmoidum vivax* malaria. Explore these relationships by creating graphs and fitting a linear models for each parasite species. If time allows, you can repeat this analysis for additional woredas.
+
+

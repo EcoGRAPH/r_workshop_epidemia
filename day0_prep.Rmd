@@ -1,0 +1,82 @@
+---
+title: |
+  | Introduction to R for Disease Surveillance 
+  | and Outbreak Forecasting
+subtitle: Pre-workshop preparation
+author: |
+  | Michael Wimberly & Chris Merkord,
+  | Geospatial Sciences Center of Excellence, South Dakota State University
+date: July 17--21 2017, Addis Ababa, Ethiopia
+output:
+  pdf_document: default
+  html_document: default
+---
+
+\pagenumbering{gobble}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Prerequisites
+
+We look forward to seeing you at the workshop in July. We will be using two main software packages in the workshop. The first is the R language and software environment, and the second is RStudio, an integrated development environment (IDE) that makes R easier to use. R and RStudio are both open source, which means that the software is freely available to all users and can be redistributed and modified. 
+
+We are asking all workshop participants to bring their own laptop computer with both R and RStudio installed. We strongly recommend that you bring a computer with Microsoft Windows so that all participants are using the same operating system. Detailed instructions for downloading and installing the software are provided below. If you have problems, don't worry. We can help you get the software set up at the beginning of the workshop. However, to save time we would like as many people as possible to come with the software already installed.
+
+### R
+
+First, download and install R from CRAN, the comprehensive R archive network. 
+
+Go to <https://cloud.r-project.org/> and click **Download R for Windows**, then under "Subdirectories" on the next page click **base**. Finally, click **Download R 3.4.1 for Windows**. Note that a newer version of R may be available by the time you are following these instructions. If so, the version number may be 3.4.2 or higher. 
+
+After downloading the installer, click it to begin the installation process. If you are prompted with the message "The publisher could not be verified. Are you sure you want to run this software?", then click **Run**. Next, select the language you want R to use, but realize that the instructors may be unable to assist later if you use a language other than English. Click **Next >>** seven (7) times. We recommend leaving all options on their default settings.
+
+If you already have R installed on your computer, make sure it is at least version 3.1.2. If it is an earlier version, download and install the newest version as described above.
+
+### RStudio
+
+RStudio is an IDE, or integrated development environment, for R.  After you have installed R, download and install the free version of RStudio Desktop from <http://www.rstudio.com/download>. Scroll to the bottom of the page and, under the heading "Installers for Supported Platforms", click the link for your operation system to download the installer. For most users this will be **RStudio 1.0.143 - Windows Vista/7/8/10**.
+
+After downloading the installer, click it to begin the installation process. If you are prompted with the message "Do you want to run this file?", then click **Run**. Then click **Next >>** two (2) times and finally click **Install**. We recommend leaving all options on their default settings.
+
+If you already have RStudio installed on your computer, update it to the newest version by following the directions above or by running RStudio and going to **Help > Check for Updates**.
+
+When you start RStudio, R will also start automatically and run within the RStudio interface. You will see two key regions in the interface:
+
+```{r echo = FALSE, out.width = "75%"}
+knitr::include_graphics("images/rstudio-console.png")
+```
+
+For now, all you need to know is that you type R code in the console pane, and press enter to run it. You'll learn more as we go along!
+
+
+### tidyverse
+
+You will also need to install some R packages. An R **package** is a collection of functions, data, and documentation that extends the capabilities of base R. All of the packages that you will use in this workshop are part of the so-called tidyverse. The packages in the tidyverse share a common philosophy of data and R programming, and are designed to work together naturally.
+
+You can install the complete tidyverse with a single line of code:
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+On your own computer, type that line of code in the console, and then press enter to run it. R will download the packages from CRAN and install them on to your computer. If you have problems installing, make sure that you are connected to the internet, and that <https://cloud.r-project.org/> isn't blocked by your firewall or proxy. 
+
+You will not be able to use the functions, objects, and help files in a package until you load it with `library()`. Once you have installed a package, you can load it with the `library()` function:
+
+```{r}
+library(tidyverse)
+```
+
+This tells you that tidyverse is loading the ggplot2, tibble, tidyr, readr, purrr, and dplyr packages. These are considered to be the **core** of the tidyverse because you'll use them in almost every analysis. 
+
+Packages in the tidyverse change fairly frequently. You can see if updates are available, and optionally install them, by running `tidyverse_update()`.
+
+
+## Background Reading
+
+Also, please read through the following articles prior to the workshop. They will provide you with  background information on the R programming language and environment and offer some insights into why R is widely used for data management and analysis in a variety of fields. After reading these articles, you will have a better idea of what you can gain from this workshop as well as the challenges that you will face in learning R. 
+
+- <http://www.nature.com/news/programming-tools-adventures-with-r-1.16609>
+- <https://www.r-bloggers.com/why-you-should-learn-r-first-for-data-science/>

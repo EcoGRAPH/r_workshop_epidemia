@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.html
+data-raw/
+example_data/
+*.pdf
+rainy_season_env_summary.csv
