@@ -83,6 +83,25 @@ This tells you that tidyverse is loading the ggplot2, tibble, tidyr, readr, purr
 Packages in the tidyverse change fairly frequently. You can see if updates are available, and optionally install them, by running `tidyverse_update()`.
 
 
+### MiKTeX
+
+MiKTeX is a TeX/LaTeX typesetting system for Microsoft Windows, and we will use it to create pdf document reports from our modeling results on the last day. 
+
+1. Double-click on **setup-2.9.6850.exe** (or, if you know you have a 64-bit system, use setup-2.9.6850-x64.exe).
+
+<!-- Get screenshots of below when test installing on laptop -->
+
+2. Click on the option for MiKTeX **Installation**.
+
+3. Select the folder */EPIDEMIA_workshop/Setup/MiKTeX_files* (or /EPIDEMIA_workshop/Setup/MiKTeX_files_x64 for 64-bit).
+
+4. **Very important:** In the step below, CHECK the box for **add to PATH**. 
+
+5. Sometime before the epidemiar section starts this week, you MUST restart your laptop to finish setting up MiKTeX. 
+
+
+
+
 ## Background Reading
 
 Also, if you have time during this week, or after the workshop, here are two useful background readings. These readings also offer some insights into why R is widely used for data management and analysis in a variety of fields. 
@@ -92,3 +111,4 @@ They can be found online here:
 * [http://www.nature.com/news/programming-tools-adventures-with-r-1.16609](https://www.r-bloggers.com/why-you-should-learn-r-first-for-data-science/)
 
 Or in the *EPIDEMIA_workshop/Setup/References/* folder.  
+
