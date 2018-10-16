@@ -1,12 +1,12 @@
 ---
 title: |
   | Introduction to R for Disease Surveillance 
-  | and Outbreak Forecasting
+  | and Outbreak Forecasting: Day 1 Start
 subtitle: Software Installation
 author: |
   | Michael Wimberly, Dawn Nekorchuk, and Andrea Hess
   | Department of Geography & Environmental Sustainability, University of Oklahoma
-date: October 22--26 2017, Bahir Dar, Ethiopia
+date: October 22 2018, Bahir Dar, Ethiopia
 output:
   pdf_document: default
   html_document: default
@@ -22,16 +22,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Welcome to the workshop! 
 
-We will be using two main software packages in the workshop. The first is the R language and software environment, and the second is RStudio, an integrated development environment (IDE) that makes R easier to use. R and RStudio are both open source, which means that the software is freely available to all users and can be redistributed and modified. We will also be using MiKTeX to create pdf documents from R code on the last day.
+We will be using two main software packages in the workshop. The first is the R language and software environment, and the second is RStudio, an integrated development environment (IDE) that makes R easier to use. R and RStudio are both open source, which means that the software is freely available to all users and can be redistributed and modified. We will also be using MiKTeX to create pdf documents from R code towards the end of the workshop.
 
-The following instructions are written for Microsoft Windows users. We highly recommend this operating system so all participants are using the same one.
+The following instructions are written for Microsoft Windows users. 
 
-We will be passing around a USB drive with all the needed installation files. Please copy this to your computer (in whichever folder you want), and pass the USB to the next person. 
+We will be passing out USB drives with the workshop documents and all the needed installation files. Please copy the entire folder to your computer (you can pick where). 
 
 
 ## R
 
-First, in the files you copied over to your laptop, navigate to */EPIDEMIA_workshop/Setup/*.  
+First, in the files you copied over to your laptop, navigate to `/EPIDEMIA_workshop/Setup/`.  
 
 Double click **R-3.5.1-win.exe** to begin the installation process. If you are prompted with the message "Do you want to allow this app to make changes to your device?, click "Yes". Next, select the language you want R to use, but realize that the instructors may be unable to assist later if you use a language other than English. Click "Next >>" to continue (six times). We recommend leaving all options on their default settings.
 
@@ -39,7 +39,7 @@ If you already have R installed on your computer, please update it to this one s
 
 ### RStudio
 
-RStudio is an IDE, or integrated development environment, for R. If you've closed the file explorer window, navigate back to the */EPIDEMIA_workshop/Setup/* folder.   
+RStudio is an IDE, or integrated development environment, for R. If you've closed the file explorer window, navigate back to the `/EPIDEMIA_workshop/Setup/` folder.   
 
 Double click on **RStudio-1.1.456.exe** file to begin the installation process. If you are prompted with the message "Do you want to allow this app to make changes to your device?, click "Yes". Then click "Next >"" until the last step "Install". We recommend leaving all options on their default settings.
 
@@ -55,7 +55,7 @@ In general, you type R code in the console pane, or use R scripts in the Source 
 
 ## R packages
 
-You will also need to install some R packages. An R package is a collection of functions, data, and documentation that extends the capabilities of base R. Most of them that you will use in this workshop are part of the 'tidyverse' set of packages. These packages share a common philosophy regarding data and R programming, and are designed to work together naturally.
+You will also need to install some R packages. An R package is a collection of functions, data, and documentation that extends the capabilities of base R. Most of them that you will use in this workshop are part of the `tidyverse` set of packages. These packages share a common philosophy regarding data and R programming, and are designed to work together naturally.
 
 When you have access to the internet, you can install packages (tidyverse in this example) by typing this line of code in the RStudio console and running it:
 
@@ -67,7 +67,7 @@ R would download the packages from CRAN and install them on to your computer.
 
 However, for this workshop, we've collected all the packages we will use and pre-downloaded them.  
 
-1. If you've closed the file explorer window, navigate back to the */EPIDEMIA_workshop/Setup/* folder, and then click on **Rpkgs_install_script.R**. This will open the R script in RStudio. 
+1. If you've closed the file explorer window, navigate back to the `/EPIDEMIA_workshop/Setup/` folder, and then click on **Rpkgs_install_script.R**. This will open the R script in RStudio. 
 
 1. Highlight all lines of code, and then either press CTRL+ENTER, or the green "Run" button. This will take a minute, but it will install many packages at once. 
 
@@ -95,7 +95,7 @@ MiKTeX is a TeX/LaTeX typesetting system for Microsoft Windows, and we will use 
 
 1. Click on the option for **Complete MiKTeX**, and "Next >".
 
-1. Select the folder */EPIDEMIA_workshop/Setup/MiKTeX_files* (or /MiKTeX_files_x64 for 64-bit), and click "Next >" twice. Select your preferred paper size, and leave the default for installing MiKTeX packages as 'Ask me first' (we are actually installing all of them right now), click "Next >". 
+1. Select the folder `/EPIDEMIA_workshop/Setup/MiKTeX_files` (or `/MiKTeX_files_x64` for 64-bit), and click "Next >" twice. Select your preferred paper size, and leave the default for installing MiKTeX packages as 'Ask me first' (we are actually installing all of them right now), click "Next >". 
 
 1. Uncheck the box for "Check for updates now". 
 
@@ -111,5 +111,5 @@ They can be found online here:
 * [http://www.nature.com/news/programming-tools-adventures-with-r-1.16609]
 * [https://www.r-bloggers.com/why-you-should-learn-r-first-for-data-science/]
 
-or in the *EPIDEMIA_workshop/Setup/References/* folder.  
+or in the `EPIDEMIA_workshop/Setup/References/` folder.  
 
