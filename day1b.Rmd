@@ -283,11 +283,11 @@ or simply
 df
 ```
 
-There are three main differences between how a tibble is printed in your console and how a data frame is printed. We use a large dataset containing epideiological data to issustrate some differences. First we load the data. 
+There are three main differences between how a tibble is printed in your console and how a data frame is printed. We use a large dataset containing epidemiological data to illustrate some differences. First we load the data. 
 
 ```{r}
 library(readr)
-data <- read_csv(file = "epi_data_2017W42.csv")
+data <- read_csv(file = "data_day1.csv")
 ```
 
 We won't print it here because it is too long, but to see what the data looks like in your console when printed as a `data.frame`, run this code:
@@ -296,7 +296,7 @@ We won't print it here because it is too long, but to see what the data looks li
 as.data.frame(data)
 ```
 
-Unless you have a very wide screen, you probably only see the last few columns and some of the rows, along with the message `reached getOption("max.print")`. The column names and first few rows are not visible unless you scroll up in your console window quite a bit. Compare that to how `epi_data_2017W42` looks when printed as a tibble:
+Unless you have a very wide screen, you probably only see the last few columns and some of the rows, along with the message `reached getOption("max.print")`. The column names and first few rows are not visible unless you scroll up in your console window quite a bit. Compare that to how `data_day1` looks when printed as a tibble:
 
 ```{r}
 data
@@ -425,7 +425,7 @@ library(ggplot2)
 qplot(x=fitted(demo_lm), y=resid(demo_lm), geom=c("point", "smooth"))
 ```
 
-## Day 1 exercises
+# Day 1 exercises
 
 Run through the demonstration yourself by typing all of the commands above into a script on your computer, running each line of the script, and then examining the output on your computer. Whenever a new function is introduced, use the `help()` function to look it up and examine the various arguments that can be specified. Experiment with changing some of the arguments to see how they affect the output of the function.
 
