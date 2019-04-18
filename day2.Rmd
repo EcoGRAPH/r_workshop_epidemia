@@ -8,7 +8,10 @@ author: |
   | Department of Geography and Environmental Sustainability, University of Oklahoma
 date: October 23 2018, Bahir Dar, Ethiopia
 output:
-  pdf_document: default
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
   html_document: default
 ---
 
@@ -437,11 +440,9 @@ ggplot(data = shp_f) +
 
 
 
+# Day 2 exercises
 
-
-## Day 2 exercises
-
-1. Read the data file `data_2015_2018.csv`.
+1. Read the data file `data_2016_2018.csv`.
 2. Create a time series plot of confirmed P. vivax malaria incidence `pv_inc`. Show each year as a different color.
 3. Use the `subset()` function to create a new data frame that contains data for two woredas of your choice.
 4. Create a time series plot of confirmed P. vivax malaria incidence `pv_inc`. Show each year as a different color. Facet by woreda.
