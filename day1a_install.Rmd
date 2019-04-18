@@ -91,9 +91,20 @@ knitr::include_graphics("images/github_epidemiar_release_v1.1.1.JPG")
 4. If you follow this method, afterwards, you will want to make sure that you have all the package dependencies installed (listed in the DESCRIPTION).
 
 
+## epidemia-scripts project {#epidemia-scripts-project}
+
+If you are part of the Amhara team with access to the epidemia-script project, this project can be downloaded from Github directly. Contact the EPIDEMIA team if you wish to have access. In the meantime, you can also use the public epidemiar-demo project to follow along on Day 4. This public version mirrors the Amhara setup. 
+
+1. While logged into your Github account, go to https://github.com/EcoGRAPH/epidemia-scripts/releases/latest. Click "Source code (zip)" to download the zipped folder of the latest update.
+
+2. Unzip the file to your Desktop or other preferred directory. You must have full read/write permissions to the directory, so do not use a system folder like Program Files. Unzipping the file will create a folder in the directory you choose. The folder name will have the version number in the file name, e.g. `epidemia-scripts-1.3`. This will help you keep track of which version of the project you are using. 
+
+3. If you are updating a previous version of the project, you will need to then copy all the needed environmental and epidemiological data from the OLD project into the NEW project. Put the data in the correct folder: `data/`, `data_epidemiological/`, `data_environmental/`. Do not put any other files into the data folders. 
+
+
 ## epidemiar-demo project {#epidemiar-demo-project}
 
-The demo project can be downloaded from Github directly. 
+As a public alternative to epidemia-scripts, there is a demonstration project can be downloaded from Github called `epidemiar-demo`. 
 
 1. Navigate to https://github.com/EcoGRAPH/epidemiar-demo/releases/latest. Click "Source code (zip)" to download the zipped folder of the latest update. (Note: below picture is of an earlier release, but the concept is the same.)
 
