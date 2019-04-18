@@ -8,7 +8,10 @@ author: |
   | Department of Geography and Environmental Sustainability, University of Oklahoma
 date: October 24 2018, Bahir Dar, Ethiopia
 output:
-  pdf_document: default
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
   html_document: default
 ---
 
@@ -18,28 +21,14 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Outline
 
-* Manipulating data with dplyr
-    + Single table verbs
-*	Grouped summaries with `summarize()`
-* Working with iso weeks
-* Tidying data with the tidyr package
-    + Spreading and gathering
-    + Uniting and separating
-    + Dealing with missing rows
-*	Combining datasets
-    + Binding tables
-    + Joining tables
-* Exercises
-
-## Introduction
+# Introduction
 
 Today you will get an introduction to creating and manipulating data. We begin to more fully explore two more of  packages of the tidyverse: tibble, dplyr. The tibble package makes creating and viewing data frames easier, while the dplyr packages provides powerful functions for manipulating data frames. 
 You will master those concepts to the point where you can work effectively with almost any dataset. You will  learn some useful new tools for working with single tables, including summarizing data by groups, organizing data so that it is *tidy*, and dealing with both explicit and implicit missing values. Next, you will learn to combine datasets using functions that work no two or more tables. 
 
 
-## Data transformations
+# Data transformations
 
 You now have a solid background in plotting data with ggplot. But what happens when your data is not already in the correct format for plotting? Or what if you want to plot only a subset of your data?
 
@@ -56,7 +45,7 @@ library(readr)
 
 The dplyr package has some excellent vignettes, including an Introduction to dplyr which can be accessed by running `vignette("dplyr")`
 
-### Single table verbs
+## Single table verbs
 
 Each data transformation has a corresponding dplyr function that accomplishes it. These functions take the form of verbs that describe the action. Some dplyr verbs operate on a single data frame or tibble, while others operate on two or more tables. Here is a list of the main dplyr verbs for single tables:
 
@@ -65,17 +54,17 @@ Each data transformation has a corresponding dplyr function that accomplishes it
 * `select()` and `rename()` select variables (columns) based on their names.
 * `mutate()` and `transmute()` add new variables that are functions of existing variables.
 
-#### Filter
+### Filter
 
 ```{r}
-mecha <- read_csv("mecha.csv")
+mecha <- read_csv("data_mecha.csv")
 mecha
 filter(mecha, iso_week == 1)
 filter(mecha, iso_year %in% 2015:2016)
 filter(mecha, mal_case > 200, iso_year != 2016)
 ```
 
-#### Arrange
+### Arrange
 
 ```{r}
 arrange(mecha, iso_week)
@@ -87,7 +76,7 @@ Use `desc()` to order a column in descending rather than ascending order.
 arrange(mecha, desc(mal_case))
 ```
 
-#### Select and Rename
+### Select and Rename
 
 Select columns to keep by name. Other columns are removed from the data frame.
 
@@ -122,13 +111,13 @@ rename(mecha, district = woreda_name,
        malaria_case = mal_case)
 ```
 
-#### Mutate and Transmute
+### Mutate and Transmute
 
 Add new variables using `mutate()`. You can create multiple new variables at a time, and you can refer to ones you've just created. 
 
 ```{r}
 mutate(mecha, 
-       inc = mal_case / popul_malar,
+       inc = mal_case / pop_at_risk,
        inc_per_1000 = inc * 1000)
 ```
 
@@ -136,18 +125,18 @@ If you only want to keep the new variables, use `transmute()`.
 
 ```{r}
 transmute(mecha, 
-       inc = mal_case / popul_malar,
+       inc = mal_case / pop_at_risk,
        inc_per_1000 = inc * 1000)
 
 ```
-For the next few exercises, you will use the `demo_data_day3` dataset introduced yesterday. Let's begin by loading the dataset again using `read_csv()`.
+For the next few exercises, you will use the `data_day3` dataset. Let's begin by loading the dataset again using `read_csv()`.
 
 ```{r, message=FALSE}
 library(readr)
-data <- read_csv("demo_data_day3.csv")
+data <- read_csv("data_day3_subset.csv")
 ```
 
-## Grouped summaries with `summarize()`
+# Grouped summaries with `summarize()`
 
 The only main dplyr verb we did not cover yesterday was `summarize()`, which collapses a data frame into a single row:
 
@@ -191,7 +180,7 @@ ggplot(summarized_cases) +
 
 Grouped summaries are a powerful tool for data exploration or for transforming data into group summaries for futher analysis or visualization.
 
-#### Missing data
+## Missing data
 
 In the previous section, you saw the argument `na.rm = TRUE`. That argument told R to remove the missing values, identified by `NA`s, from the data before summarizing.
 
@@ -203,7 +192,7 @@ sum(c(1, 2, 3, NA))
 sum(c(1, 2, 3, NA), na.rm = TRUE)
 ```
 
-#### Counts
+## Counts
 
 When summarizing, it is often useful to count the number of values used. This can be done with the dplyr function `n()`, which will include `NA` values, or `sum(!is.na(x))` which will exclude them. It's often a good idea to count when summarizing to make sure your summaries are not based on a very small sample size.
 
@@ -219,7 +208,7 @@ If the only summary you want to perform is counting, you can also use the dplyr 
 count(by_woreda_year, woreda_name, iso_year)
 ```
 
-#### Useful summary functions
+## Useful summary functions
 
 Up to this point, you've only seen two summary functions: `sum()` and `n()`. Other useful summary functions include:
 
@@ -229,36 +218,37 @@ Up to this point, you've only seen two summary functions: `sum()` and `n()`. Oth
 * Measures of position: `first(x)`, `nth(x, 2)`, `last(x)`. These work similarly to x[1], x[2], and x[length(x)] but let you set a default value if that position does not exist (i.e. you’re trying to get the 3rd element from a group that only has two elements).
 * Counts: You’ve seen `n()`, which takes no arguments, and returns the size of the current group. To count the number of non-missing values, use `sum(!is.na(x))`. To count the number of distinct (unique) values, use `n_distinct(x)`.
 
-## Working with epideiological weeks (WHO ISO 8601)
+# Working with epidemiological weeks (WHO ISO 8601)
 
-Up until this point we have been working with epidemiological datasets organized by epidemiological week number (or iso week) and epidemiological year (or iso year). An example of this is our example dataset, which we can narrow down to incidence data only for illustrative purposes.
+Up until this point we have been working with epidemiological datasets organized by epidemiological week number (or iso week) and epidemiological year (or iso year). We will use a trimmed down version of our full (without missing rows) dataset earlier in the day as an example. 
 
 ```{r}
-incid <- select(data, woreda_name, iso_year, iso_week, pf_tot_inc, pv_only_inc)
+day3 <- read_csv("data_day3.csv")
+incid <- select(day3, woreda_name, iso_year, iso_week, pfm_inc, pv_inc)
 incid
 count(incid, woreda_name)
 ```
 
-We can see that we have 69 weeks of data for each woreda. If we wanted to plot this data as a single time series of 69 weeks, we might do something like this:
+We can see that we have n weeks of data for each woreda. If we wanted to plot this data as a single time series of n weeks, we might do something like this:
 
 ```{r}
 ggplot(incid) +
-  geom_line(aes(x = iso_week, y = pf_tot_inc)) +
+  geom_line(aes(x = iso_week, y = pfm_inc)) +
   facet_wrap(~ woreda_name, ncol = 1, scales = "free_y")
 ```
 
-The problem is that ggplot does not know that we have data from different years, so for each week it plots all six years on top of each other and tries to connect them with a line. Unfortunately, the aesthetic mappings in ggplot plot must be 1 to 1, meaning you can't map two columns in the data frame (iso_year and iso_week) as the x axis values.
+The problem is that ggplot does not know that we have data from different years, so for each week it plots all years on top of each other and tries to connect them with a line. Unfortunately, the aesthetic mappings in ggplot plot must be 1 to 1, meaning you can't map two columns in the data frame (iso_year and iso_week) as the x axis values.
 
-In this situation we need to add a new column to our dataset that contains properly ordered values to use as the x-axis variable. But what values do we use? We could simple number the rows as 1 to 258 for each woreda, but then we lose the date-related information on the x axis when we plot it. The solution is to convert from epi weeks to dates, i.e. the Date class you learned about on day 1. Dates contain all the necessary information to be ordered correctly, and they fit in a single column.
+In this situation we need to add a new column to our dataset that contains properly ordered values to use as the x-axis variable. But what values do we use? We could simple number the rows as 1 to n for each woreda, but then we lose the date-related information on the x axis when we plot it. The solution is to convert from epi weeks to dates, i.e. the Date class you learned about on day 1. Dates contain all the necessary information to be ordered correctly, and they fit in a single column.
 
-Although the lubridate package in R contains many useful functions for working with dates in general, it does not yet include a function to convert from epi weeks and epi years to calendar dates. For that we will need to use a custom function.  We'll talk more about functions tomorrow, but for now, just run this code:
+Although the lubridate package in R contains many useful functions for working with dates in general, it does not yet include a function to convert from iso weeks and iso years to calendar dates. For that we will need to use a custom function, which we will load (or "source") from another R file. 
 
 ```{r}
 library(lubridate)
 source("date_functions.R")
 ```
 
-If you look at the Environment tab in RStudio you will see that it now includes a function named `make_date_yw()`. This function takes vectors of epidemiological years, week numbers (1--53), and weekdays (1--7) and returns a vector of Dates. For example:
+If you look at the Environment tab in RStudio you will see that it now includes a function named `make_date_yw()`. This function takes vectors of iso years, week numbers (1--53), and weekdays (1--7) and returns a vector of Dates. For example:
 
 ```{r}
 make_date_yw(year = 2017, week = 1, weekday = 1)   # first day of 2017 week 1
@@ -268,11 +258,11 @@ make_date_yw(2015:2017, 1:3)                       # arguments can be vectors
 make_date_yw(2017, 1:3)                            # arguments are "recycled"
 ```
 
-There were two other functions included in the `epiweek_functions.R` file, named `epiweek()` and `epiyear()`, which take a Date and return the epi week or epi year, repectively.
+Other very useful functions exist in the `lubridate` package. 
 
 ```{r}
-epiweek(Sys.Date())  # today's epi week
-epiyear(Sys.Date())  # today's epi year
+isoweek(Sys.Date())  # today's ISO week number
+isoyear(Sys.Date())  # today's ISO year
 ```
 
 Because `make_date_yw()` is accepts vectors as arguments, we can use it with `mutate()`.
@@ -280,7 +270,7 @@ Because `make_date_yw()` is accepts vectors as arguments, we can use it with `mu
 ```{r}
 incid_date <- mutate(incid, date = make_date_yw(iso_year, iso_week))
 incid_date <- select(incid_date, woreda_name, iso_year, iso_week, 
-                     date, pf_tot_inc, pv_only_inc) # put the new column after date
+                     date, pfm_inc, pv_inc) # put the new column after date
 incid_date
 ```
 
@@ -288,7 +278,7 @@ Now when we plot, we can map the x axis value to the date column `date`:
 
 ```{r}
 ggplot(incid_date) +
-  geom_line(aes(x = date, y = pf_tot_inc)) +
+  geom_line(aes(x = date, y = pfm_inc)) +
   facet_wrap(~ woreda_name, ncol = 1, scales = "free_y")
 ```
 
@@ -297,23 +287,23 @@ R automatically adjusts the x-axis labels based on the range of dates. In this c
 ```{r, fig.height=3}
 # plot a single year of Mecha incidence
 ggplot(filter(incid_date, woreda_name == "Mecha", iso_year == 2016)) +
-  geom_line(aes(x = date, y = pf_tot_inc))
+  geom_line(aes(x = date, y = pfm_inc))
 # plot a few months of Mecha incidence
 ggplot(filter(incid_date, woreda_name == "Mecha", iso_year == 2016, iso_week > 40)) +
-  geom_line(aes(x = date, y = pf_tot_inc))
+  geom_line(aes(x = date, y = pfm_inc))
 ```
 
-For epidemiological data, of course, it might be more useful to label the weeks by epi week number rather than date. In this case, we can use a new function `scale_x_date()` to modify how the x axis labels appear. `scale_x_date()` takes an argument named labels, which can be defined in several ways (see the help page), but importantly for our purposes it can be given the name of a function which converts Dates to character or numeric values to use as labels. We have just such a function in `epiweek()`!
+For epidemiological data, of course, it might be more useful to label the weeks by iso week number rather than date. In this case, we can use a new function `scale_x_date()` to modify how the x axis labels appear. `scale_x_date()` takes an argument named labels, which can be defined in several ways (see the help page), but importantly for our purposes it can be given the name of a function which converts Dates to character or numeric values to use as labels. We have just such a function in `isoweek()`!
 
 ```{r, fig.height=3}
-# plot a single year with epi week labels
+# plot a single year with iso week labels
 ggplot(filter(incid_date, woreda_name == "Mecha", iso_year == 2016)) +
-  geom_line(aes(x = date, y = pf_tot_inc)) +
-  scale_x_date(labels = epiweek) +
+  geom_line(aes(x = date, y = pfm_inc)) +
+  scale_x_date(labels = isoweek) +
   labs(x = "ISO Week") # dont forget to change the axis label to match
 ```
 
-## Tidying data with the tidyr package
+# Tidying data with the tidyr package
 
 The concept of **tidy** data has become increasing popular among R users over the past few years thanks to the tidyr package, and more recently the tidyverse family of packages. Tidy data refers to data tables in which each row is an **observation**, each column is a **variable**, and each cell is a **value**.
 
@@ -321,7 +311,7 @@ Tidy data has three main advantages: it is consistent and therefor easily replic
 
 Unfortunately data is not always stored in tidy format. For example, data is often stored in a format that facilitates data entry. The functions in the tidyr package help you tidy your data so that it may be used for further visualization and analysis.
 
-### Spreading and gathering
+## Spreading and gathering
 
 Two common problems with un-tidy datasets are when one variable is spread across multiple columns or one observation is spread across multiple rows. In these cases, you can use the two tidyr functions `gather()` and `spread()`.
 
@@ -340,7 +330,7 @@ The names of the columns will become values in a new variable called the **key**
 ```{r}
 library(tidyr)
 incid_tidy <- gather(incid_date, key = agent, value = inc, 
-                     pf_tot_inc, pv_only_inc) # these are the columns to gather
+                     pfm_inc, pv_inc) # these are the columns to gather
 incid_tidy
 ```
 
@@ -359,11 +349,11 @@ library(tidyr)
 spread(incid_tidy, key = agent, value = inc)
 ```
 
-### Separating and uniting
+## Separating and uniting
 
 Sometimes you may find that a single column contains multiple values. In that case, you need to **separate** the two values into multiple columns.
 
-Image we have a dataset where the epi week is provided in year-week format, e.g. "2017-W01". 
+Image we have a dataset where the iso week is provided in year-week format, e.g. "2017-W01". 
 
 ```{r}
 yw_example <- tibble(yw = c("2016-W01", "2016-W02", "2016-W03"),
@@ -387,13 +377,13 @@ The complement of `separate()` is `unite()`, which can be used to **unite** mult
 unite(yw_sep, col = "yw", iso_year, iso_week, sep = "-W")
 ```
 
-### Dealing with missing rows
+## Dealing with missing rows
 
 An important distinction can be made with regards to missing values. Missing values can be missing in one of two ways: **explicitly**, as with `NA` values, or **implicitly**, as when they are simply not present in the data.
 
 To illustrate this point, we will modify our `incid` data created above by removing some of the rows to create implicitly missing values.
 
-To begin with, `incid` has 258 weeks of data for each woreda.
+To begin with, `incid` has n weeks of data for each woreda.
 
 ```{r}
 count(incid, woreda_name)
@@ -423,7 +413,7 @@ What if we only wanted combinations of year and week that were already in the da
 complete(incid_incompl, woreda_name, nesting(iso_year, iso_week))
 ```
 
-Now we're back to starting on week 28 and having 1032 rows, the same number we had before we randomly removed rows. And we now have a dataset "complete" with explicitly missing values.
+Now we're back to starting on week 28 and having n rows, the same number we had before we randomly removed rows. And we now have a dataset "complete" with explicitly missing values.
 
 ## Combining datasets with dplyr
 
@@ -438,8 +428,8 @@ Joining two tables together matches rows by value rather than position. The data
 If data have the same columns, you can use `bind_rows()` to "stack" them one on top of the other in a new data frame.
 
 ```{r, message=FALSE}
-mecha <- read_csv("mecha.csv")
-fogera <- read_csv("fogera.csv")
+mecha <- read_csv("data_mecha.csv")
+fogera <- read_csv("data_fogera.csv")
 mf_bind <- bind_rows(mecha, fogera)
 mecha
 count(mf_bind, woreda_name, iso_year)
@@ -453,20 +443,19 @@ mecha_pf_pv <- select(mecha, c("test_pf_tot", "test_pv_only"))
 bind_cols(mecha_mal_case, mecha_pf_pv)
 ```
 
-### Joining tables
+## Joining tables
 
 Table joins are a concept shared across many data science disciplines and are implemented in relational database management systems such as MySQL.
 
 With a join, two tables are connected to each other conceptually through variables called **keys**, which are variables found in both tables. For the datasets you've seen so far, possible key columns include woreda, iso_year, or iso_week.
 
-For the following exercises, we will use a new dataset found in `ndwi.xlsx`. This dataset contains satellite-derived values of NDWI, normalized difference water index, an index of vegetation water content (VWC). VWC is related to the abundance of suitable mosquito breeding habitat and is therefore useful when predicting future malaria outbreaks.
+For the following exercises, we will use a new dataset found in `data_ndwi.csv`. This dataset contains satellite-derived values of NDWI, normalized difference water index, an index of vegetation water content (VWC). VWC is related to the abundance of suitable mosquito breeding habitat and is therefore useful when predicting future malaria outbreaks. This dataset is a subset containing years 2016, 2017, and 2018. 
 
 The problem is that the NDWI data is daily, while our epidemiological data is weekly. If we want to connect one to the other, we will need to perform two main tasks: summarize the daily data by epi week, and join the new weekly environmental data to the weekly epidemiological data.
 
-First, let's load the data. This time, instead of a CSV file, the data is stored as an Excel file. The tidyverse includes the readxl package which allows you to read Excel files using the `read_excel()` function. The syntax for `read_excel()` is very similar to `read_csv()` The file is about 5 MB, so it may take a while to read on some computers.
 
 ```{r, message=FALSE, fig.height=3}
-ndwi <- read_csv("ndwi.csv")
+ndwi <- read_csv("data_ndwi.csv")
 glimpse(ndwi)  # like str() but but simpler output
 ggplot(filter(ndwi, woreda_name=="Mecha")) +
   geom_line(aes(x = obs_date, y = obs_value))
@@ -477,7 +466,8 @@ The next step is to the daily data by iso week. Unfortunately, we do not have co
 ```{r}
 
 # convert date to epi year and epi week
-ndwi <- mutate(ndwi, iso_year = isoyear(obs_date), 
+ndwi <- mutate(ndwi, 
+               iso_year = isoyear(obs_date), 
                iso_week = isoweek(obs_date))
 ndwi
 ```
@@ -510,7 +500,7 @@ ndwi_wk
 
 At this point, we are ready to join the NDWI data with the epidemiological data.
 
-#### Inner join
+### Inner join
 
 The first type of join we will perform is called an **inner join**. With this type of join, rows are included in the output only if there are matching key values in both tables.
 
@@ -528,9 +518,9 @@ inner_join(mecha_mal_case, ndwi_wk, by = c("woreda_name", "iso_year", "iso_week"
 
 Looking at the resulting table, we can see that the columns in `mecha` are all present in the output, in the same order, followed by the non-key columns from `ndwi_wk`. 
 
-We can also see that the resulting dataset has only 140 rows. `mecha` had 157 rows, so some rows must not have had a key match between the two tables. Examining more closely and we can see that 2014 week 1 was not present in `ndwi_wk` and is also not present in the joined tables.
+We can also see that the resulting dataset has only n rows. `mecha` had n rows, so some rows must not have had a key match between the two tables. Examining more closely and we can see that YYYY week W was not present in `ndwi_wk` and is also not present in the joined tables.
 
-#### Outer joins
+### Outer joins
 
 It may be perfectly fine to have rows with non-matching keys removed by an inner join. It depends on your goal. However for our demonstration lets assume we want to keep all rows from `mecha`. This is possible using a **left join**. With this type of join, all rows from the table on the "left" side of the join are kept, and missing values are inserted where there is no matching row in the table on the "right" side.
 
@@ -541,7 +531,7 @@ lj <- left_join(mecha_mal_case, ndwi_wk, by = c("woreda_name", "iso_year", "iso_
 lj
 ```
 
-You can see that the resulting table still has 157 rows. The first row, for 2014 week 1, was missing after the left join. Here it is present, with missing values for the variables ndwi and n, the two that came from the table on the right.
+You can see that the resulting table still has n rows. The first row, for YYYY week W, was missing after the left join. Here it is present, with missing values for the variables ndwi and n, the two that came from the table on the right.
 
 Using `gather()` we can easily plot the joined dataset.
 
@@ -551,14 +541,14 @@ ggplot(gather(lj, key, value, mal_case, ndwi)) +
   facet_wrap(~ key, ncol = 1, scales = "free_y")
 ```
 
-## Day 3 exercises
+# Day 3 exercises
 
-1. Read the `epi_data_2017W42.csv` dataset.
+1. Read the `data_2016_2018.csv` dataset.
 2. Summarize the data. Calculate the min, max, and mean values of mal_case for each woreda.
 3. Now summarize the data by woreda *and* year.
-4. Starting with the mecha.csv data, create a tidy data frame with columns for iso_year, iso_week, and malaria agent (P. falciparum vs. P. vivax). Unnecessary columns can be removed.
+4. Starting with the data_mecha.csv data, create a tidy data frame with columns for iso_year, iso_week, and malaria agent (P. falciparum vs. P. vivax). Unnecessary columns can be removed.
 5. Plot this tidy data frame using colors for malaria agent and facets for years.
-6. Create a data frame that contains both the daily *and* weekly NDWI data for a woreda and year of your choice. Plot the values on the same plot, with Date on the x axis and NDWI on the y axis. Use either point or line geoms and choose aesthetics to help differentiate the daily and weekly data.
+6. Create a data frame that contains both the daily *and* weekly NDWI data for a woreda and year (2016 - 2018) of your choice. Plot the values on the same plot, with Date on the x axis and NDWI on the y axis. Use either point or line geoms and choose aesthetics to help differentiate the daily and weekly data.
 7. Create a data frame that contains both the daily and weekly NDWI data for a woreda and year of your
 choice. Plot the values on the same plot, with Date on the x axis and NDWI on the y axis. Use either
 point or line geoms and choose aesthetics to help differentiate the daily and weekly data.
