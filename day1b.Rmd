@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This tutorial will provide an introduction to R, an open-source computer software system for designed for statistical computation and graphics. R includes an interpreted language combined with a run-time environment that provides scripting, graphics, and debugging capabilities. By learning how to use the R language and environment, you will gain access to an large collection of functions for data processing, data visualization, and statistical modeling that are freely available through add-on packages.
 
-Today, we will start with the basics. You will first learn about the R *objects* that store various types of data. Then you will learn how to manipulate these objects using *functions* that typically take one or more objects as inputs, and then modify these inputs to produce a new object as the output. These concepts will be deminstrated by showing how R can be used to perform practical tasks, including making simple calculations, applying these calculations over larger datsets, querying subsets of data that meet one or more conditions, and carrying out standard statistical tests.
+Today, we will start with the basics. You will first learn about the R *objects* that store various types of data. Then you will learn how to manipulate these objects using *functions* that typically take one or more objects as inputs, and then modify these inputs to produce a new object as the output. These concepts will be demonstrated by showing how R can be used to perform practical tasks, including making simple calculations, applying these calculations over larger datasets, querying subsets of data that meet one or more conditions, and carrying out standard statistical tests.
 
 # Working with R objects
 
@@ -84,7 +84,7 @@ pop <- rep(x=population, times=12)
 pop
 ```
 
-One of the best features of R is that it allows us to to use vector arithmentic to carry out element-wise mathematical operations without having to write code for looping. Note that if we specify a a single value, it will automatically be repeated for the entire length of the vector. So the following two statements produce the same output.
+One of the best features of R is that it allows us to to use vector arithmetic to carry out element-wise mathematical operations without having to write code for looping. Note that if we specify a a single value, it will automatically be repeated for the entire length of the vector. So the following two statements produce the same output.
 
 ```{r vectors 3}
 cases * 2
@@ -116,7 +116,7 @@ cases[9:12]
 cases[-2]
 ```
 
-Logcial vectors can be used to select subsets that meet a given criterion or to assign a new value to a subset
+Logical vectors can be used to select subsets that meet a given criterion or to assign a new value to a subset
 
 ```{r vectors 6}
 inc > 10
@@ -130,14 +130,15 @@ inc2
 In addition to numeric and logical vectors, we can also have vectors of character data such as month names and we can be subset our data using these names.
 
 ```{r vectors 7}
-mname <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+mname <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 class(mname)
-names(inc) <-mname
+names(inc) <- mname
 inc[c("Jun", "Jul", "Aug")]
 ```
 
 
-There is also a special type of vector called a factor that is used for categorial data analysis. If we wanted to use the vector of woreda names in an analysis comparing statistica across the different woredas, we need to convert it into a factor.
+There is also a special type of vector called a factor that is used for categorical data analysis. If we wanted to use the vector of woreda names in an analysis comparing statistics across the different woredas, we need to convert it into a factor.
 
 ```{r vectors 9}
 worname <- c("Mecha", "Dembecha", "Libokemkem", "Fogera", "South Achefer")
@@ -199,14 +200,14 @@ attributes(epi_data)
 summary(epi_data)
 ```
 
-The coumns of a data frame can be accessed as list elements.
+The columns of a data frame can be accessed as list elements.
 
 ```{r dataframes 2}
 epi_data$mname
 epi_data$inc
 ```
 
-Data frames can also be accessed via matrix style subscriptiving of rows and columns.
+Data frames can also be accessed via matrix style subscripting of rows and columns.
 ```{r dataframes 3}
 epi_data[3, 4]
 epi_data[1:3,]
@@ -355,7 +356,7 @@ as.character(dateobj)
 as.numeric(dateobj)
 ```
 
-For working with epidemiological data, we might also want to find out what week or year a date falls in, following the ISO conventions. The package `lubridate` helps us with these conversion from date objects to iso weeks and iso years.
+For working with epidemiological data, we might also want to find out what week or year a date falls in, following the ISO conventions. The package `lubridate` helps us with these conversion from date objects to ISO weeks and ISO years.
 
 ```{r}
 library(lubridate)
@@ -388,7 +389,7 @@ t.test(x=demo_data$mal_case, conf.level=0.9)
 t.test(x=demo_data$mal_case, conf.level=0.99)
 ```
 
-How does the `t.test()` function know what confidence level to use if we do not specify the `conf.level` argument? In many cases, arguments have a default value. If the argument is no specified in the function call, then the default value is used. When using statistical fundtions in R, it is particularly important to study the documentation to learn the default values and decide if they are sufficient for the analysis.
+How does the `t.test()` function know what confidence level to use if we do not specify the `conf.level` argument? In many cases, arguments have a default value. If the argument is no specified in the function call, then the default value is used. When using statistical functions in R, it is particularly important to study the documentation to learn the default values and decide if they are sufficient for the analysis.
 
 ```{r stats 1b, eval=FALSE}
 help(t.test)
@@ -400,7 +401,7 @@ To conduct a two-sample t-test, we can call the same function and specify a form
 t.test(mal_case ~ woreda_name, data=demo_data)
 ```
 
-The following code carries out a two-way analysis of variance of outpatient malaria cases by woreda and year. The `aov()` function take two arguments, a model formula and the data object and generates an object of class aov that contains the results of the analysis. Note that we use the `as.factor()` function to coerce epi_year into a factor. We the supply the aov object as an argument to the `anova()` function to produce a standard analysis of variance table. We can also supply it as an argument to the `TukeyHSD()` function to generate a multiple comparisons object. This object can then be supplied as an argument to the `print()` and `plot()` functions to view the results.
+The following code carries out a two-way analysis of variance of outpatient malaria cases by woreda and year. The `aov()` function take two arguments, a model formula and the data object and generates an object of class aov that contains the results of the analysis. Note that we use the `as.factor()` function to coerce iso_year into a factor. We the supply the aov object as an argument to the `anova()` function to produce a standard analysis of variance table. We can also supply it as an argument to the `TukeyHSD()` function to generate a multiple comparisons object. This object can then be supplied as an argument to the `print()` and `plot()` functions to view the results.
 
 ```{r stats 3}
 demo_aov <- aov(mal_case ~ woreda_name + as.factor(iso_year), data=demo_data)
@@ -411,10 +412,10 @@ print(demo_mc)
 plot(demo_mc)
 ```
 
-The following code carries out a linear regression analysis of positive tests for *Plasmodium vivax* only (dependent variable) as a function of positive tests for *Plasmodium falciparum*/mixed (independent variable). As with the `aov()` function, the `lm()` function takes a formula and a data argument and returns an object belonging to class `lm`. We can then use various other functions to summarize the lm object in various ways and to extract coefficients, fitted values, and residuals.
+The following code carries out a linear regression analysis of positive tests for *Plasmodium vivax* only (dependent variable) as a function of positive tests for *Plasmodium falciparum*/mixed (independent variable). We are using a square root transformation to help reduce right skewness of the distribution shape of the case counts. As with the `aov()` function, the `lm()` function takes a formula and a data argument and returns an object belonging to class `lm`. We can then use various other functions to summarize the lm object in various ways and to extract coefficients, fitted values, and residuals.
 
 ```{r stats 4, fig.height=3}
-demo_lm <- lm(sqrt(test_pv_only + 1) ~ sqrt(test_pf_tot + 1), data=demo_data)
+demo_lm <- lm(sqrt(test_pv_only) ~ sqrt(test_pf_tot), data=demo_data)
 class(demo_lm)
 attributes(demo_lm)
 summary(demo_lm)
@@ -429,7 +430,7 @@ qplot(x=fitted(demo_lm), y=resid(demo_lm), geom=c("point", "smooth"))
 
 Run through the demonstration yourself by typing all of the commands above into a script on your computer, running each line of the script, and then examining the output on your computer. Whenever a new function is introduced, use the `help()` function to look it up and examine the various arguments that can be specified. Experiment with changing some of the arguments to see how they affect the output of the function.
 
-Then, to pratice what you have learned, try out the following exercises:
+Then, to practice what you have learned, try out the following exercises:
 
 The following set of 24 numbers represents *Plasmodium falciparum* cases collected from January 2015 through December 2016 at a health center. Create a vector called `pfcases` containing these numbers.
 
@@ -451,4 +452,4 @@ Using these data, write R code to carry out the following tasks:
 8. Generate a new vector that contains the total malaria incidence (per 1,000 population) in each month.
 9. Combine all of the vectors that you have created to make a data frame.
 10. Use the `subset()` function to create a new data frame that contains only data for 2016.
-11. Use the lm function to carry out a linear regression with pfcases as the dependent variable and pvcases as the independent variable.
+11. Use the `lm()` function to carry out a linear regression with pfcases as the dependent variable and pvcases as the independent variable.
