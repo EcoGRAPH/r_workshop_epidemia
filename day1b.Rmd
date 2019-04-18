@@ -287,7 +287,7 @@ There are three main differences between how a tibble is printed in your console
 
 ```{r}
 library(readr)
-data <- read_csv(file = "data_day1.csv")
+data <- read_csv(file = "data_day1-2.csv")
 ```
 
 We won't print it here because it is too long, but to see what the data looks like in your console when printed as a `data.frame`, run this code:
@@ -296,7 +296,7 @@ We won't print it here because it is too long, but to see what the data looks li
 as.data.frame(data)
 ```
 
-Unless you have a very wide screen, you probably only see the last few columns and some of the rows, along with the message `reached getOption("max.print")`. The column names and first few rows are not visible unless you scroll up in your console window quite a bit. Compare that to how `data_day1` looks when printed as a tibble:
+Unless you have a very wide screen, you probably only see the last few columns and some of the rows, along with the message `reached getOption("max.print")`. The column names and first few rows are not visible unless you scroll up in your console window quite a bit. Compare that to how `data_day1-2` looks when printed as a tibble:
 
 ```{r}
 data
@@ -382,7 +382,7 @@ mean(myvector, na.rm=T)
 Functions are also used to carry various types of statistical tests in R. For example, to compute confidence intervals for  a particular variable in our data frame, we can call the `t.test()` function. Argument `x` is the data. The default confidence level is 0.95, but we can specify a value for the `conf.level` argument if we want something different.
 
 ```{r stats 1}
-demo_data <- read_csv(file = "data_day1.csv")
+demo_data <- read_csv(file = "data_day1-2.csv")
 t.test(x=demo_data$mal_case)
 t.test(x=demo_data$mal_case, conf.level=0.9)
 t.test(x=demo_data$mal_case, conf.level=0.99)
