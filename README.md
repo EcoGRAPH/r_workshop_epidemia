@@ -1,2 +1,4 @@
 
-Tutorials for the "Introduction to R" workshop held in Bahir Dar, Ethiopia, 17-21 July 2017.
+Tutorials for an "Introduction to R" workshop.
+Based on workshop held in Bahir Dar, Ethiopia in 2018 with updates and edits. 
+Epidemiological data is simulated. Data is for demo use only and not for research or public health purposes.
