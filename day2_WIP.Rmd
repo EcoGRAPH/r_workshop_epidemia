@@ -1,0 +1,461 @@
+---
+title: |
+  | Introduction to R for Disease Surveillance 
+  | and Outbreak Forecasting: Day 2
+subtitle: Exploring data with effective visualizations
+author: |
+  | Michael Wimberly, Dawn Nekorchuk and Andrea Hess,
+  | Department of Geography and Environmental Sustainability, University of Oklahoma
+date: October 23 2018, Bahir Dar, Ethiopia
+output:
+  pdf_document: default
+  html_document: default
+---
+
+\pagenumbering{gobble}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Outline
+
+* Introduction
+* Basic graphics
+* Plotting with ggplot2
+    + Creating a ggplot
+    + Aesthetic mappings
+    + Facets
+    + Geometric objects
+    + The generalized ggplot template
+`   + Other types of plots
+* Mapping with ggplot
+* Exercises
+
+## Introduction
+
+This tutorial will teach you how to work with and visualize your data in R. By the end of today's lesson, you will be able to visualize data from data tables.
+
+Over the past 20 years R has become increasingly popular for statistical programming. One of R's strengths has always been that it makes it easy for anybody to join the R community and contribute to R's capabilities by creating new packages, and recently the number of R packages on CRAN and elsewhere has grown at an astonishing rate. As a result, there are many new packages that improve on the data manipulation and plotting functions included with the basic R installation.
+
+Today we begin to explore one of those packages: ggplot2. The package ggplot2 offers a versatile system for plotting data frames and can even be used to generate maps.
+
+
+## Basic graphics
+
+In R, a function takes one or more *arguments* as inputs and then produces an object as an output. So far we have used a variety of relatively simple functions to do basic data manipulation and print out results to the console. Moving forward, the key to understanding how to do more advanced data processing, data visualization, and statistical analysis and R is learning which functions to use and how to specify the appropriate arguments to get these functions to do what you want. The following section will illustrate the use of some functions to generate basic graphics. 
+
+First, we will read a dataset from an external file named `"demo_data.csv"`. Make sure this file is in your working directory before you try to read it. We first have to load the `readr` package to get access to the `read_csv()` function. Then we use this function to read the file and put it into a data frame. 
+
+```{r graphs 1, fig.height=3}
+library(readr)
+demo_data <- read_csv(file = "demo_data.csv")
+summary(demo_data)
+```
+
+Now we can use the qplot function to generate a scatterplot of *Plasmodium faciparum*/mixed cases versus *Plasmodium vivax* cases. This function is part of the `ggplot2` package, and it allows us to quickly create basic graphs with relatively simple function calls. We will learn how to make more customizable graphs using the powerful `ggplot()` function later this week. For now, we will specify a few arguments to indicate the variable to be plotted on the x-axis, the variable to be plotted on the y-axis, and the data frame containing these variables.
+
+```{r graphs 2, fig.height=3}
+library(ggplot2)
+qplot(x=test_pf_tot, y=test_pv_only, data=demo_data)
+```
+
+Here we specify only a single data argument along with "histogram" for the geom argument to create a histogram
+
+```{r graphs 3, fig.height=3}
+qplot(x=test_pf_tot, data=demo_data, geom="histogram")
+```
+
+Switching back to the scatterplot, we can specify the colour argument to plot woredas or years as different colors.
+
+```{r graphs 4, fig.height=4}
+library(tidyverse)
+qplot(x=test_pf_tot, y=test_pv_only, colour=woreda_name, data=demo_data)
+qplot(x=test_pf_tot, y=test_pv_only, colour=as.factor(iso_year), data=demo_data)
+```
+
+Here, we select a subset of the data for one of the woredas and plot malaria cases using lines instead of points. Additional arguments add text labels to the axes.
+
+```{r graphs 6, fig.height=3}
+library(lubridate)
+qplot(x=isoweek(obs_date), y=mal_case, colour=as.factor(iso_year),
+      data=filter(demo_data, woreda_name=="Fogera"), geom="line",
+      main="Fogera Outpatient Malaria Cases", xlab="Iso Week", ylab = "Cases")
+```
+
+Clearly, knowing the arguments that can be specified for a specific function is very important. The quickest way to learn more about an R function is to display its documentation using the `help()` function.
+
+```{r graphs 7, eval=FALSE}
+help(qplot)
+```
+
+## Plotting with ggplot2
+
+While R has several different systems for making plots (also called graphs or visualizations), the ggplot2 package is one of the most versatile because it allows you to use one system to visualize many different kinds of data.
+
+To start, we will read in a simple dataset with which to practice plotting. The file `fogera.csv` contains one year of malaria case data from Fogera woreda. Read the dataset using `read_csv()` as you did yesterday.
+
+```{r}
+library(readr)
+fogera <- read_csv("fogera.csv")
+fogera
+```
+
+To access the ggplot2 functions and help pages, load the ggplot package:
+
+```{r}
+library(ggplot2)
+```
+
+### Creating a ggplot
+
+One of the most common types of plot in epidemiology is a time series plot, in which the date or time element is on the x-axis and the measured variable of interest is on the y-axis. The data values are usually connected by a line to indicate progression through time.
+
+Use this code to plot the number of malaria cases in Fogera during 2017.
+
+```{r, fig.height=3}
+ggplot(data = fogera) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case))
+```
+
+You use `ggplot()` to create a coordinate system onto which you may add layers. The first argument to `ggplot()` is always `data`, the dataset to plot. You could run `ggplot(fogera)` to create just the blank coordinate system, but it's not very interesting so its not shown here.
+
+Once you have a blank plot, you can add layers to it. For example, `geom_line()` in the example above adds lines to the plot. The `mapping` argument specifies the aesthetic mapping to use. Aesthetic mappings tell ggplot which columns in the dataset get used for (or "mapped to") which features of the plot. The mapping is always specified by the `aes()` function.
+
+In our example, the mapping tells ggplot that the `iso_week` column contains x-axis values and the `mal_case` column contains y-axis values.
+
+#### A reuseable template
+
+The above code can be generalized to a reuseable template for plotting with `ggplot()`:
+
+```{r, eval = FALSE}
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+#### Aesthetic mappings
+
+You've already learned about mapping data columns to x and y axes. If you want to visualize a third column, you will have to map it to some other part of the plot. 
+
+To illustrate, we will read in the dataset in `mecha.csv`, which contains the same variables as the Fogera dataset, but includes three years of data.
+
+```{r}
+mecha <- read_csv("mecha.csv")
+mecha
+```
+
+Because there are three years of data in this dataset, we need some way to tell the lines for the three years apart. One common choice is to show different lines with different colors. Here we will "map" the `iso_year` column to the `color` aesthetic like this:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year))
+```
+
+Note that ggplot is treating iso_year as a continuous variable and trying to draw a line connecting points across years. This is the default behavior for data columns of class "numeric". To treat iso_year as a categorical variable, we can use `factor()` to convert the numerical vector of years to a categorical vector of years.
+
+```{r, fig.height=3}
+mecha$iso_year <- factor(mecha$iso_year)
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year))
+```
+
+The blue color gradient used in the legend has been replaced by a discrete color legend with unique colors for each year. You can always tell whether ggplot is treating one of your variables as continuous or categorical by whether it uses a gradient or discrete color legend.
+
+Other aesthetics for lines include linetype, size, and alpha, which controls transparency. For points, there is also a shape aesthetic.
+
+You can even assign multiple aesthetics to the same column:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, 
+                          color = iso_year, linetype = iso_year))
+```
+
+You can also set an aesthetic to a fixed value by defining that aesthetic outside of the `aes()` function. For example, to turn all the lines blue, you would use this:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(aes(x = iso_week, y = mal_case, linetype = iso_year), 
+            color = "blue")
+```
+
+Sometimes we want to plot groups of data but we don't want to map the groups to any particular aesthetic such as color or linetype. In these cases, you can use the `group` argument inside the `aes()` function:
+
+```{r, fig.height=3}
+# no year aesthetic
+ggplot(data = mecha) +
+  geom_line(aes(x = iso_week, y = mal_case, group = iso_year), 
+            color = "blue")
+```
+
+The years are still plotted correctly, but it is no longer possible to tell which year is which. This may be desirable if the goal is just to show the variability from year to year without identifying individual years.
+
+For a complete overview of all the possible aesthetic specifications, run the command `vignette('ggplot2-specs')` to view the **Aesthetic specifications** vignette.
+
+#### Facets
+
+Another way to view additional variables on your plot is to use facets. Facetting allows you to split your dataset into subsets. 
+
+For example, the plot above is very crowded with three years of data on it. It might be easier to read if each year of data was on its own subplot, or facet.
+
+To facet by a single variable, use `facet_wrap()` like this.
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case)) +
+  facet_wrap(~ iso_year)
+``` 
+
+Because these are time series data, it might be nice to have the stack the subplots on top of each other instead of having them side-by-side. You can change the layout using `ncol` or `nrow` to specify the number of colums or rows.
+
+```{r}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case)) +
+  facet_wrap(~ iso_year, ncol = 1)
+``` 
+
+You may notice that the maximum number of cases in 2014 was significantly higher than in other years, making it hard to see the seasonality 2015 and 2016. To allow the data in those years to stretch to take up the entire vertical space, you can use the `scales` argument. In this case, set it to `"free_y"`.
+
+```{r}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case)) +
+  facet_wrap(~ iso_year, ncol = 1, scales = "free_y")
+``` 
+
+Notice how the range of the y axis varies between subplots now.
+
+#### Geometric objects
+
+A **geom** is the geometrical object that a plot uses to represent data. There are often multiple ways to represent the same data visually. For example, we have been using line geometries to visualize our time series of malaria case data. An alternative might be to use points for each value.
+
+The function for a point geom is `geom_point()`.
+
+```{r}
+ggplot(data = mecha) +
+  geom_point(mapping = aes(x = iso_week, y = mal_case)) +
+  facet_wrap(~ iso_year, ncol = 1, scales = "free_y")
+``` 
+
+You can even represent the same data using multiple geoms!
+
+```{r}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case)) +
+  geom_point(mapping = aes(x = iso_week, y = mal_case)) +
+  facet_wrap(~ iso_year, ncol = 1, scales = "free_y")
+```
+
+Some aesthetics can only be used with certain geoms. For example, points can have a shape aesthetic, but lines cannot. Conversely, lines can have a linetype aesthetic, but points can not.
+
+#### Scales
+
+Scales control the details of how data values are translated to visual properties. We can override the default scales to tweak details like the axis labels or legend keys, or to use a completely different translation from data to aesthetic.
+
+For example, to change the axis, legend, and plot labels we can use the `labs()` function:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year)) +
+  labs(x = "iso Week", y = "Number of Cases", color = "Year",
+       title = "Malaria cases in Mecha over a 3-year period")
+```
+
+Other possible arguments to `labs()` include `subtitle`, `caption`, and any other aesthetics you have mapped, e.g. `linetype` or `shape`.
+
+To adjust the limits of the x and y axes, you can use `lims()`:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year)) +
+  lims(x = c(32, 42))
+```
+
+Other scales let you adjust the x and y axes even more. For example, to plot the y axis on the log scale, which is often desirable when dealing with count data where most values are low but a few very high values occur, you can use `scale_y_log10()`:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year)) +
+  scale_y_log10()
+```
+
+To set the color manually, we can use `scale_color_manual()`:
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_line(mapping = aes(x = iso_week, y = mal_case, color = iso_year)) +
+  scale_color_manual(values = c("orange", "purple", "brown"))
+```
+
+Colors can be specified in several ways in R. The simplest way is with a character string giving the color name (e.g., "red"). A list of the possible colors can be obtained with the function `colors()`. Alternatively, colors can be specified directly in terms of their RGB components with a string of the form "#RRGGBB". For more information see the "Color Specification" section under `help("par")`.
+
+Each aesthetic has its own scale functions, e.g. `scale_linetype()` and `scale_size()`. For more on scales, the best references is the ggplot documentation website: http://ggplot2.tidyverse.org/reference/#section-scales. 
+
+#### The generalized ggplot template
+
+Up to this point, you have learned how to:
+
+1. create a ggplot using `ggplot()` 
+2. add geometric representations of data to a plot using geoms
+3. map data columns to plot aesthetics
+4. split your dataset into subplots using facets.
+5. control the visual properties of your plot using scales
+
+These steps can be combined to create generalized code for plotting in ggplot.
+
+```{r, eval = FALSE}
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>)) +
+  <FACET_FUNCTION> +
+  <SCALE_FUNCTION> +
+  <SCALE_FUNCTION>
+```
+
+This is the template that we use for most of the plots in this workshop. Once you master it, the plots you can create will allow you to learn a lot about your data. This process is part of *data exploration*.
+
+On the other hand, communicating your understanding to others requires considerable effort in making your plots as self-explanatory as possible. To learn more about how to do this, we recommend the "Graphics for communication" chapter of "R for Data Science" by Grolemund and Wickham: http://r4ds.had.co.nz/graphics-for-communication.html.
+
+### Other types of plots
+
+#### Scatterplot
+
+Scatterplots are used to show the relationship between two variables. They are like time series plots, but they always use points for the geometry and both axes are measured variables rather than just the y axis.
+
+```{r, fig.height=3}
+ggplot(data = mecha) +
+  geom_point(mapping = aes(x = tot_case, y = mal_case, color = iso_year))
+```
+
+#### Histograms
+
+A histogram is a graphical representation of the distribution of numerican data. It usually has boxes whose area is proportional to the frequency of a class of values. In this example, we will plot the frequency of malaria count data in the fogera dataset.
+
+```{r, fig.height=3}
+ggplot(fogera) +
+  geom_histogram(aes(x = mal_case), bins = 10)
+```
+
+Each column represents a discrete "bin", or range of values. The height of the rectangles represents the number of values in the bin, i.e. the number of weeks where the number of malaria cases fell within the values covered by the bin.
+
+#### Boxplots
+
+Like histograms, boxplots also visualize the distribution of data.
+
+```{r, fig.height=3}
+ggplot(mecha) +
+  geom_boxplot(aes(iso_year, test_pv_only))
+```
+
+In ggplot, the horizontal line represents the median value, the box represents the inter quartile range (IQR), i.e. the 25th through 75th percentiles. The upper whisker extends from the hinge to the largest value no further than `1.5 * IQR` from the hinge (where IQR is the inter-quartile range, or distance between the first and third quartiles). The lower whisker extends from the hinge to the smallest value at most `1.5 * IQR` of the hinge. Data beyond the end of the whiskers are called "outlying" points and are plotted individually.
+
+## Mapping in ggplot
+
+We can also use ggplot to make maps. For this demonstration we focus on creating coropleth maps from a shapefile. We first use the `readOGR()` function to read the layer we want to display from a given directory (data source name) where the shapefile is stored.  
+
+```{r}
+library(rgdal)
+shp <- readOGR(dsn = "./shapefile", layer = "woreda_epidemia_20170207", stringsAsFactors = F)
+summary(shp)
+```
+
+To generate a map of Woredas using `ggplot()`, we use the `geom_polygon()` function. The `coord_equal()` function forces the map to have the same scale for x and y
+coordinates.
+
+```{r}
+ggplot()+
+  geom_polygon(data=shp, 
+            aes(x=long, y=lat, group=group), colour="black", fill=NA)+
+  coord_equal()
+
+```
+
+To map data with ggplot2, we need to take an additional step and convert the imported sp object to a data frame that contains all of the geospatial data for the polygon locations along with their associated attributes in a single table. This step is necessary because ggplot2, along with other `tidyverse` packages such as dplyr and tidyr, all use data frames as their core data objects. A data frame is actually a rather inefficient format for strong polygon data, but this approach allows us to access to a wide range of
+powerful mapping functions via the `ggplot()` function.
+
+```{r}
+shp_data <- shp@data
+shp_f <- fortify(shp, region = "woreda")
+head(shp_f)
+shp_f <- left_join(shp_f, shp_data, by=c("id" = "woreda"))
+```
+
+
+Now as we have converted our shapefile into a data frame containing the spatial information of our Woredas, we can add our epidemiological data to it. We will use `read_csv()` to load the epidemiological data. Then we use  `group_by()` and `summarize()` to summarize cases by Woreda. Finally we use `left_join()` to add our epidemiological data to the data frame of our shapefile. Tomorrow we will learn even more ways of summarizing data and of joining multiple dataset. 
+
+```{r}
+library(readr)
+epi_dat <- read_csv ("epi_data_2017W42.csv")
+by_woreda <- group_by(epi_dat, woreda_name)
+summarized_cases <- summarize(by_woreda, 
+                              mal_case = sum(mal_case, na.rm = TRUE))
+shp_f <- left_join(shp_f, summarized_cases, by=c("id" = "woreda_name"))
+```
+
+Key arguments of `geom_polygon()` include spatial coordinates, the variable to be used to fill in the polygons, and the color and size of the polygon borders. By default, `ggplot()` will use a default color ramp (light to dark blue) to represent the number of cases in each polygon. 
+
+```{r}
+ggplot(data = shp_f) +
+  geom_polygon(aes(x = long, y = lat, group = group, fill = mal_case),
+               color = "black", size = 0.25) +
+  coord_equal()
+```
+
+As with any other sort of ggplot, we can easily change the color displayed. Here we can work with different color palettes The RColorBrewer package provides a variety of color palettes that have been determined to be effective for
+choropleth mapping. The following functions can be used to explore the different palettes that are available.
+More information is also available at http://colorbrewer2.org.
+
+```{r stats 4, fig.height=7}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+
+We can do a few additional things to improve the appearance of the map. The `scale_fill_distiller()` function can be used to specify a different color pallette. In this case, we use the “YlGn” palette from the RColorBrewer package and call the `pretty_breaks()` function from the scales package to automatically select a set of breaks for the legend. The `theme_void()` function gets rid of the gray background grid and the axis scales and labels to produce a nicer looking map layout. Finally, a title is added using the labs() function.
+
+``` {r}
+library(ggmap)  # Additional functions for mapping with ggplot()
+library(scales) # Additional graphics functions
+
+ggplot(data = shp_f) +
+  geom_polygon(aes(x = long, y = lat, group = group, fill = mal_case),
+               color = "black", size = 0.25) +
+  scale_fill_distiller(name="Cases", palette = "YlGn", breaks = pretty_breaks()) +
+  coord_equal() +
+  theme_void()+
+  labs(title="Malaria cases in the Amhara region")
+```
+
+
+Rather than using continuous scales for color and size, it is usually recommended to aggregate the data into a relatively small number of classes (typically 3-6). To accomplish this, we need to add a couple of new classified variables using `mutate()`. The `cut()` function is used to split the incidence rate into four quantiles, and to split population into three classes using manually-selected breaks. Note that different `scale()` functions are now needed to handle the discrete variables instead of continuous variables.
+
+```{r}
+shp_f <- mutate(shp_f,
+                mal_case_discrete = cut(mal_case, 
+                                        breaks = quantile(mal_case, na.rm=T),
+                                        include.lowest = T, dig.lab=10)
+                )
+
+
+ggplot(data = shp_f) +
+  geom_polygon(aes(x = long, y = lat, group = group, fill = mal_case_discrete),
+               color = "black", size = 0.25) +
+  scale_fill_brewer(name="Cases", palette = "YlGn")+
+  coord_equal() +
+  theme_void()+
+  labs(title="Malaria cases in the Amhara region")
+  
+```
+
+
+
+
+
+
+## Day 2 exercises
+
+1. Read the data file `epi_data_2017W42.csv`.
+2. Create a time series plot of confirmed P. vivax malaria incidence `pv_inc`. Show each year as a different color.
+3. Use the `subset()` function to create a new data frame that contains data for two woredas of your choice.
+4. Create a time series plot of confirmed P. vivax malaria incidence `pv_inc`. Show each year as a different color. Facet by woreda.
+5. Facet by woreda *and* year using `facet_grid()`. You will need to use `help("facet_grid")` to learn how to specify the faceting in this new function.
+6. Create a scatterplot showing the relationship between confirmed P. falciparum malaria incidence and confirmed P. vivax malaria incidence.
+7. Create a map showing the total cases of Malaria caused by P. falciparum for each Woreda.

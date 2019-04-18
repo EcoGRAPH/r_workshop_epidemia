@@ -4,55 +4,40 @@ title: |
   | and Outbreak Forecasting: Day 1
 subtitle: First steps toward using R - basic data objects and functions
 author: |
-  | Michael Wimberly & Chris Merkord,
-  | Geospatial Sciences Center of Excellence, South Dakota State University
-date: July 17 2017, Addis Ababa, Ethiopia
+  | Michael Wimberly, Dawn Nekorchuk and Andrea Hess,
+  | Department of Geography and Environmental Sustainability, University of Oklahoma
+date: October 22 2018, Bahir Dar, Ethiopia
 output:
-  pdf_document: default
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
   html_document: default
 ---
 
 \pagenumbering{gobble}
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Outline
 
-*	Introduction 
-*	Working with R objects
-    + Using R as a calculator
-    + Vectors
-    + Matrices and lists
-    + Data frames
-    + Factors
-* Additional topics
-    + Coercing data to different classes
-    + Dates in R
-    + Missing data - the `NA` symbol
-* Functions
-    + Basic graphics
-    + Statistical analysis
-* Exercises
-
-## Introduction
+# Introduction
 
 This tutorial will provide an introduction to R, an open-source computer software system for designed for statistical computation and graphics. R includes an interpreted language combined with a run-time environment that provides scripting, graphics, and debugging capabilities. By learning how to use the R language and environment, you will gain access to an large collection of functions for data processing, data visualization, and statistical modeling that are freely available through add-on packages.
 
-Today, we will start with the basics. You will first learn about the R *objects* that store various types of data. Then you will learn how to manipulate these objects using *functions* that typically take one or more objects as inputs, and then modify these inputs to produce a new object as the output. These concepts will be deminstrated by showing how R can be used to perform practical tasks, including making simple calculations, applying these calculations over larger datsets, querying subsets of data that meet one or more conditions, generating basic graphics, and carrying out standard statistical tests.
+Today, we will start with the basics. You will first learn about the R *objects* that store various types of data. Then you will learn how to manipulate these objects using *functions* that typically take one or more objects as inputs, and then modify these inputs to produce a new object as the output. These concepts will be deminstrated by showing how R can be used to perform practical tasks, including making simple calculations, applying these calculations over larger datsets, querying subsets of data that meet one or more conditions, and carrying out standard statistical tests.
 
-## Working with R objects
+# Working with R objects
 
-### Using R as a calculator
+## Using R as a calculator
 
 At the most basic level, R can be used as a simple calculator. You can type in just about any mathematical expression on the command line in the console, hit the Enter key, and R will give the answer. Alternately, you can type the mathematical expressions as lines in a script file and then Run one or more lines, which is the way that we will be presenting this demonstration. The output is printed to the console by default.
 
 ```{r expressions}
 33
 23 + 46
-27 * 0.003
-160 + 13 * 2.1
 (160 + 13) * 2.1
 237.81 / (3.7^2 + sqrt(165.3)) - 26.23
 ```
@@ -79,7 +64,7 @@ x
 print(x)
 ```
 
-### Vectors
+## Vectors
 
 When we work with real data, we typically need to keep track of multiple measurements of our variables. For example, we may have data on malaria cases at multiple health facilities and data collected over multiple weeks, months, and years. Therefore, we usually work with vectors, which are objects that can contain multiple values. For example, consider that we have malaria case data for twelve months of the year. We can use the `c()` (combine) function to assign these data to a vector object.
 
@@ -95,27 +80,21 @@ month <- seq(from=1, to=12, by=1)
 month
 month2 <- 1:12
 month2
-pops <- rep(x=population, times=12)
-pops
+pop <- rep(x=population, times=12)
+pop
 ```
 
 One of the best features of R is that it allows us to to use vector arithmentic to carry out element-wise mathematical operations without having to write code for looping. Note that if we specify a a single value, it will automatically be repeated for the entire length of the vector. So the following two statements produce the same output.
 
 ```{r vectors 3}
 cases * 2
-cases + cases
-```
-
-Some further examples are provided below.
-
-```{r vectors 3c}
-pops + 1000
 cases2 <- c(22, 5, 13, 16, 22, 34, 24, 56, 431, 88, 67, 45)
 totcases <- cases + cases2
 totcases
-inc <- 10000 * cases/pops
+inc <- 10000 * cases/pop
 inc
 ```
+
 
 Vectors can also be used in more complex mathematical expressions and supplied as arguments to functions.
 
@@ -131,8 +110,7 @@ sum((cases - mean(cases))^2) / (length(cases)-1)
 Subsets of data can be selected by specifying index numbers within brackets. Positive numbers are used to include subsets, and negative numbers are used to exclude subsets.
 
 ```{r vectors 5}
-cases[1]
-cases[10]
+cases[5]
 cases[c(1, 3, 8, 11)]
 cases[9:12]
 cases[-2]
@@ -149,25 +127,20 @@ inc2 <- inc[inc > 10]
 inc2
 ```
 
-Elements of a vector can also have names, and can be subsetted using these names
+In addition to numeric and logical vectors, we can also have vectors of character data such as month names and we can be subset our data using these names.
 
 ```{r vectors 7}
 mname <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+class(mname)
 names(inc) <-mname
 inc[c("Jun", "Jul", "Aug")]
 ```
 
-In addition to numeric and logical vectors, we can also have vectors of character data such as place names
-
-```{r vectors 8}
-worname <- c("Mecha", "Dembecha", "Libokemkem", "Fogera", "South Achefer")
-length(worname)
-class(worname)
-```
 
 There is also a special type of vector called a factor that is used for categorial data analysis. If we wanted to use the vector of woreda names in an analysis comparing statistica across the different woredas, we need to convert it into a factor.
 
 ```{r vectors 9}
+worname <- c("Mecha", "Dembecha", "Libokemkem", "Fogera", "South Achefer")
 worfact <- factor(worname)
 worname
 class(worfact)
@@ -184,12 +157,12 @@ treat_fac <- factor(treat_num, labels = c("treatment", "control"))
 summary(treat_fac)
 ```
 
-### Matrices and lists
+## Matrices and lists
 
 Multiple vectors of the same length can be combined to create a matrix, which is a two-dimensional object with columns and rows. All of the values in a matrix must be the same data type (for example, numeric, text, or logical). We can use the `cbind()` function to combine the vectors as columns and the 'rbind()' function to combine the vectors as rows.
 
 ```{r matrices 1}
-mat1 <- cbind(month, cases, pops, inc)
+mat1 <- cbind(month, cases, pop, inc)
 mat1
 class(mat1)
 rownames(mat1)
@@ -201,27 +174,27 @@ Matrix elements can be extracted via subscripting in [row, column] format. Leavi
 ```{r matrices 2}
 dim(mat1)
 mat1[1,1]
+mat1[,4]
 mat1[2,]
-mat1[6,]
 ```
 
 Lists are ordered collections of objects. They are created using the list function and can be subscripted by component number or component name. Lists differ from vectors and matrices in that they can contain a mixture of different data types.
 
 ```{r lists}
-l1 <- list(mycases = cases, mypop = population)
-l1
-l1[[1]]
-l1[[2]]
-l1$mycases
-l1[["mypop"]]
+my_list <- list(mycases = cases, mypop = population)
+my_list
+my_list[[1]]
+my_list[[2]]
+my_list$mycases
+my_list[["mypop"]]
 ```
 
-### Data frames
+## Data frames
 
 Data frames are like matrices in that they have a rectangular format consisting of columns and rows, and are like lists in that they can contain columns with multiple data types such as numeric, logical, character, and factor. 
 
 ```{r dataframes 1}
-epi_data <- data.frame(mname, month, cases, pops, inc)
+epi_data <- data.frame(mname, month, cases, pop, inc)
 attributes(epi_data)
 summary(epi_data)
 ```
@@ -252,11 +225,101 @@ new_data2 <- subset(epi_data, month >= 7)
 new_data2
 ```
 
-## Additional topics
+# Tibbles
+
+Throughout the rest of this workshop we will be working with "tibbles" instead of R's traditional "data frame". Tibbles actually _are_ data frames, but they change the way data frames work to reduce some of the problems caused by the limitations of the older `data.frame` class.
+
+If you're wondering where the name came from, tibbles originally had the class `tbl_df`, which stood for "table" and "data frame". People soon began pronouncing this new class "tibble diff", and ultimately just "tibble".
+
+Tibbles are defined in the tibble package, which can be loaded with the library function.
+
+```{r}
+library(tibble)
+```
+
+If you run this code and get the error message “there is no package called ‘tibble’”, you’ll need to first install it, then run `library()` once again.
+
+```{r, eval=FALSE}
+install.packages("tibble")
+library(tibble)
+```
+
+You only need to install a package once, but you need to reload it every time you start a new session.
+
+## Creating tibbles
+
+Most of the functions in the tidyverse create tibbles, and all of them can accept tibbles as arguments. However many packages in R use traditional data frames. in which case you might want to coerce a data frame to a tibble using `as_tibble()`. Here is an example using the built in `iris` dataset, a data frame.
+
+```{r}
+as_tibble(iris)
+```
+
+Here you can see the built-in iris dataset has 150 rows and 5 columns.
+
+You can create a new tibble from individual vectors with `tibble()`. `tibble()` will automatically recycle inputs of length 1, and allows you to refer to variables that you just created, as shown below.
+
+```{r}
+df <- tibble(
+  woreda = "Mecha",
+  iso_week = 1:5,
+  iso_year = 2017,
+  cases = c(10, 12, 7, 9, 5),
+  population = 5129,
+  incidence = cases / population * 1000
+)
+df
+```
+
+## Printing tibbles
+
+Like other objects, a tibble can be printed in two ways.
+```{r}
+print(df)
+```
+
+or simply
+
+```{r}
+df
+```
+
+There are three main differences between how a tibble is printed in your console and how a data frame is printed. We use a large dataset containing epideiological data to issustrate some differences. First we load the data. 
+
+```{r}
+library(readr)
+data <- read_csv(file = "epi_data_2017W42.csv")
+```
+
+We won't print it here because it is too long, but to see what the data looks like in your console when printed as a `data.frame`, run this code:
+
+```{r, results="hide"}
+as.data.frame(data)
+```
+
+Unless you have a very wide screen, you probably only see the last few columns and some of the rows, along with the message `reached getOption("max.print")`. The column names and first few rows are not visible unless you scroll up in your console window quite a bit. Compare that to how `epi_data_2017W42` looks when printed as a tibble:
+
+```{r}
+data
+```
+
+First, only the first 10 rows of the data frame are printed. Second, only columns that fit on the screen are printed. The remainder are listed at the bottom. Third, the class of each column is given beneath its name.
+
+As a whole, these improvements make printing tibbles much easier on the eyes than printing data frames.
+
+## Using tibbles with older functions
+
+Some older functions don’t work with tibbles. If you find yourself unable to run an older function with a tibble, use `as.data.frame()` to turn it into a traditional data frame.
+
+```{r, eval=FALSE}
+as.data.frame(data)
+```
+
+
+# Additional topics
 
 Before moving on, it is necessary to mention a few more features of R that will come up in our demonstrations and exercises throughout the week.
 
-### Coercing data to differnet classes
+## Coercing data to differnet classes
 
 As we will see in the next section, we accomplish various tasks in R by calling functions and supplying various objects as arguments to these functions. In some cases, we may need to quickly convert data to a different object type before providing it as a function argument. We can do this by coercing the data into a new class using functions like `as.factor()`, `as.character()`, and `as.numeric()`.
 
@@ -269,7 +332,7 @@ levels(as.factor(myvector2))
 as.character(myvector2)
 ```
 
-### Dates in R
+## Dates in R
 
 In disease surveillance and environmental monitoring, we often need to keep track of the time when a particular data record was collected. In R, there is a special object class for storing date information.
 
@@ -282,7 +345,7 @@ class(today)
 There are variety of ways to create date objects. One simple way is to use the `as.Date()` function to coerce a text object into a date object. Date objects can also coerced back to text or numeric objects. Later in the workshop, we will use some more advance functions that can convert epidemiological weeks into dates and calculate the day of the year based on a date object.
 
 ```{r}
-datetxt <- c("2017-1-1", "2017-1-2", "2017-1-3", "2017-1-4")
+datetxt <- c("2017-12-30", "2018-1-2", "2018-1-3", "2018-1-4")
 summary(datetxt)
 class(datetxt)
 dateobj <- as.Date(datetxt)
@@ -292,7 +355,16 @@ as.character(dateobj)
 as.numeric(dateobj)
 ```
 
-### Missing data - the `NA` symbol
+For working with epidemiological data, we might also want to find out what week or year a date falls in, following the ISO conventions. The package `lubridate` helps us with these conversion from date objects to iso weeks and iso years.
+
+```{r}
+library(lubridate)
+isoweek(dateobj)
+isoyear(dateobj)
+
+```
+
+## Missing data - the `NA` symbol
 
 The `NA` symbol is a special value used in R to indicate missing data. When processing and managing data, it is critical that missing data be appropriately flagged as `NA` rather treated as zero or some other arbitrary value. Most R functions have build-in methods for handing missing data, and as we will see in later examples it is often necessary to choose the most appropriate method for a particular analysis. Below are some quick examples.
 
@@ -304,62 +376,16 @@ mean(myvector)
 mean(myvector, na.rm=T)
 ```
 
-## Functions
 
-### Basic graphics
-
-In R, a function takes one or more *arguments* as inputs and then produces an object as an output. So far we have used a variety of relatively simple functions to do basic data manipulation and print out results to the console. Moving forward, the key to understanding how to do more advanced data processing, data visualization, and statistical analysis and R is learning which functions to use and how to specify the appropriate arguments to get these functions to do what you want. The following section will illustrate the use of some functions to generate basic graphics. 
-
-First, we will read a dataset from an external file named `"day1_demo_data.csv"`. Make sure this file is in your working directory before you try to read it. We first have to load the `readr` package to get access to the `read_csv()` function. Then we use this function to read the file and put it into a data frame. 
-
-```{r graphs 1, fig.height=3}
-library(readr)
-demo_data <- read_csv(file = "day1_demo_data.csv")
-summary(demo_data)
-```
-
-Now we can use the qplot function to generate a scatterplot of *Plasmodium faciparum*/mixed cases versus *Plasmodium vivax* cases. This function is part of the `ggplot2` package, and it allows us to quickly create basic graphs with relatively simple function calls. We will learn how to make more customizable graphs using the powerful `ggplot()` function later this week. For now, we will specify a few arguments to indicate the variable to be plotted on the x-axis, the variable to be plotted on the y-axis, and the data frame containing these variables.
-
-```{r graphs 2, fig.height=3}
-library(ggplot2)
-qplot(x=rdt_pf_tot, y=rdt_pv_only, data=demo_data)
-```
-
-Here we specify only a single data argument along with "histogram" for the geom argument to create a histogram
-
-```{r graphs 3, fig.height=3}
-qplot(x=rdt_pf_tot, data=demo_data, geom="histogram")
-```
-
-Switching back to the scatterplot, we can specify the colour argument to plot woredas or years as different colors.
-
-```{r graphs 4, fig.height=4}
-qplot(x=rdt_pf_tot, y=rdt_pv_only, colour=woreda, data=demo_data)
-qplot(x=rdt_pf_tot, y=rdt_pv_only, colour=as.factor(epi_year), data=demo_data)
-```
-
-Here, we select a subset of the data for one of the woredas and plot malaria cases using lines instead of points. Additional arguments add text labels to the axes.
-
-```{r graphs 6, fig.height=3}
-qplot(x=epi_week, y=mal_outp, colour=as.factor(epi_year),
-      data=subset(demo_data, woreda=="Abargelie"), geom="line",
-      main="Abargelie Outpatient Malaria Cases", xlab="Epi Week", ylab = "Cases")
-```
-
-Clearly, knowing the arguments that can be specified for a specific function is very important. The quickest way to learn more about an R function is to display its documentation using the `help()` function.
-
-```{r graphs 7, eval=FALSE}
-help(qplot)
-```
-
-### Statistical analysis
+# Basic statistical analysis
 
 Functions are also used to carry various types of statistical tests in R. For example, to compute confidence intervals for  a particular variable in our data frame, we can call the `t.test()` function. Argument `x` is the data. The default confidence level is 0.95, but we can specify a value for the `conf.level` argument if we want something different.
 
 ```{r stats 1}
-t.test(x=demo_data$mal_outp)
-t.test(x=demo_data$mal_outp, conf.level=0.9)
-t.test(x=demo_data$mal_outp, conf.level=0.99)
+demo_data <- read_csv(file = "data_day1.csv")
+t.test(x=demo_data$mal_case)
+t.test(x=demo_data$mal_case, conf.level=0.9)
+t.test(x=demo_data$mal_case, conf.level=0.99)
 ```
 
 How does the `t.test()` function know what confidence level to use if we do not specify the `conf.level` argument? In many cases, arguments have a default value. If the argument is no specified in the function call, then the default value is used. When using statistical fundtions in R, it is particularly important to study the documentation to learn the default values and decide if they are sufficient for the analysis.
@@ -371,13 +397,13 @@ help(t.test)
 To conduct a two-sample t-test, we can call the same function and specify a formula where the variable to be compared is specified to the left of the tilde (`~`) symbol and a variable indicating the group to which each observation belongs is specified on the right.
 
 ```{r stats 2}
-t.test(mal_outp ~ woreda, data=demo_data)
+t.test(mal_case ~ woreda_name, data=demo_data)
 ```
 
 The following code carries out a two-way analysis of variance of outpatient malaria cases by woreda and year. The `aov()` function take two arguments, a model formula and the data object and generates an object of class aov that contains the results of the analysis. Note that we use the `as.factor()` function to coerce epi_year into a factor. We the supply the aov object as an argument to the `anova()` function to produce a standard analysis of variance table. We can also supply it as an argument to the `TukeyHSD()` function to generate a multiple comparisons object. This object can then be supplied as an argument to the `print()` and `plot()` functions to view the results.
 
 ```{r stats 3}
-demo_aov <- aov(mal_outp ~ woreda + as.factor(epi_year), data=demo_data)
+demo_aov <- aov(mal_case ~ woreda_name + as.factor(iso_year), data=demo_data)
 class(demo_aov)
 anova(demo_aov)
 demo_mc <- TukeyHSD(demo_aov)
@@ -385,15 +411,17 @@ print(demo_mc)
 plot(demo_mc)
 ```
 
-The following code carries out a linear regression analysis of positive RDT tests for *Plasmodium vivax* only (dependent variable) as a function of positive RDT tests for *Plasmodium falciparum*/mixed (independent variable). As with the `aov()` function, the `lm()` function takes a formula and a data argument and returns an object belonging to class `lm`. We can then use various other functions to summarize the lm object in various ways and to extract coefficients, fitted values, and residuals.
+The following code carries out a linear regression analysis of positive tests for *Plasmodium vivax* only (dependent variable) as a function of positive tests for *Plasmodium falciparum*/mixed (independent variable). As with the `aov()` function, the `lm()` function takes a formula and a data argument and returns an object belonging to class `lm`. We can then use various other functions to summarize the lm object in various ways and to extract coefficients, fitted values, and residuals.
 
 ```{r stats 4, fig.height=3}
-demo_lm <- lm(sqrt(rdt_pv_only + 1) ~ sqrt(rdt_pf_tot + 1), data=demo_data)
+demo_lm <- lm(sqrt(test_pv_only + 1) ~ sqrt(test_pf_tot + 1), data=demo_data)
 class(demo_lm)
 attributes(demo_lm)
 summary(demo_lm)
 anova(demo_lm)
 coef(demo_lm)
+
+library(ggplot2)
 qplot(x=fitted(demo_lm), y=resid(demo_lm), geom=c("point", "smooth"))
 ```
 
@@ -420,9 +448,7 @@ Using these data, write R code to carry out the following tasks:
 5. Generate a vector that contains the number of the year (2015 or 2016) corresponding to each element of pfcases and pvcases.
 6. Generate a new vector that contains the population corresponding to each element of `pfcases` and `pvcases`, assuming a population of 23,000 in 2015 and 23,500 in 2016.
 7. Generate a new vector that contains the total number of malaria cases in each month.
-8. Generate a new vector that contains the total malaria incidence (per 10,000 population) in each month.
+8. Generate a new vector that contains the total malaria incidence (per 1,000 population) in each month.
 9. Combine all of the vectors that you have created to make a data frame.
 10. Use the `subset()` function to create a new data frame that contains only data for 2016.
-11. Use the qplot function to generate a historical of total malaria incidence.
-12. Use the qplot function the generate a scatterplot of Plasmodium falciparum cases versus Plasmodium vivax cases, with points from each year specified with a different color.
-13. Use the lm function to carry out a linear regression with pfcases as the dependent variable and pvcases as the independent variable.
+11. Use the lm function to carry out a linear regression with pfcases as the dependent variable and pvcases as the independent variable.
